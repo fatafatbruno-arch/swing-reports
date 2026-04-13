@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Swing Picks · Apr 12 17:52</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#0d1117;color:#e6edf3;padding:20px}
+.wrap{max-width:980px;margin:0 auto}
+
+/* Header */
+.hdr{background:linear-gradient(135deg,#161b22,#21262d);padding:24px 28px;border-radius:12px;border:1px solid #30363d;margin-bottom:16px}
+.hdr h1{font-size:22px;font-weight:800;color:#f0f6fc}
+.hdr .meta{color:#8b949e;font-size:12px;margin-top:4px}
+
+/* Market bar */
+.mktbar{display:grid;grid-template-columns:1fr 1fr 1fr 2fr;gap:12px;margin-bottom:16px}
+.mkt-tile{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:14px 16px}
+.mkt-label{font-size:11px;color:#8b949e;text-transform:uppercase;letter-spacing:.8px}
+.mkt-val{font-size:20px;font-weight:800;color:#f0f6fc;margin:4px 0 2px}
+.mkt-ret{font-size:12px;font-weight:600}
+.pulse-box{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:14px 16px}
+.pulse-box .lbl{font-size:11px;color:#8b949e;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.pulse-text{font-size:13px;color:#c9d1d9;line-height:1.6}
+
+/* Sector bars */
+.sector-panel{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;margin-bottom:16px}
+.sector-panel h3{font-size:12px;color:#8b949e;text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px}
+.sector-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.sector-name{font-size:12px;color:#c9d1d9;width:80px;flex-shrink:0}
+.sector-bar-wrap{flex:1;background:#21262d;border-radius:4px;height:6px}
+.sector-bar{height:6px;border-radius:4px;transition:width .3s}
+.sector-ret{font-size:12px;font-weight:700;width:50px;text-align:right}
+
+/* Section title */
+.sec-title{font-size:12px;color:#8b949e;text-transform:uppercase;letter-spacing:1px;margin:20px 0 12px;font-weight:700}
+
+/* Analysis card */
+.acard{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:20px;margin-bottom:16px}
+.acard-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.acard-left{display:flex;align-items:center;gap:10px}
+.acard-ticker{font-size:28px;font-weight:900;color:#f0f6fc}
+.setup-badge{font-size:11px;padding:3px 10px;border-radius:20px;color:#fff;font-weight:600}
+.acard-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rec-badge{font-size:12px;padding:5px 14px;border-radius:20px;color:#fff;font-weight:700}
+.conf-badge{font-size:12px;color:#8b949e;background:#21262d;padding:4px 10px;border-radius:20px}
+.acard-price-row{display:flex;align-items:center;gap:14px;margin-bottom:12px;flex-wrap:wrap}
+.price-now{font-size:20px;font-weight:700;color:#79c0ff}
+.quant-score{font-size:12px;color:#8b949e;background:#21262d;padding:3px 10px;border-radius:20px}
+.ret-badge{font-size:13px;font-weight:700}
+.thesis-box{background:#21262d;border-left:3px solid #388bfd;padding:12px 14px;border-radius:6px;font-size:13px;color:#c9d1d9;line-height:1.6;margin-bottom:14px}
+.analysis-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.ag-block{background:#0d1117;border:1px solid #21262d;border-radius:6px;padding:10px 12px}
+.ag-title{font-size:11px;color:#8b949e;font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.ag-text{font-size:12px;color:#c9d1d9;line-height:1.6}
+.trade-levels{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.tl{background:#21262d;border-radius:8px;padding:8px 12px;text-align:center;font-size:11px;color:#8b949e;min-width:90px;flex:1}
+.tl strong{display:block;font-size:13px;color:#f0f6fc;margin-top:3px}
+.tl.entry{border-top:2px solid #388bfd}
+.tl.t1{border-top:2px solid #3fb950}
+.tl.t2{border-top:2px solid #56d364}
+.tl.stop{border-top:2px solid #f85149}
+.tl.rr{border-top:2px solid #d2a8ff}
+.tl.tf{border-top:2px solid #ffa657}
+.indicator-strip{display:flex;gap:8px;flex-wrap:wrap}
+.indicator-strip span{font-size:11px;background:#0d1117;border:1px solid #30363d;padding:3px 10px;border-radius:20px;color:#8b949e}
+.indicator-strip b{color:#c9d1d9}
+
+/* Quant table */
+.tbl-wrap{background:#161b22;border:1px solid #30363d;border-radius:8px;overflow:hidden;margin-bottom:20px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead tr{background:#21262d}
+th{padding:10px 12px;text-align:left;font-weight:600;font-size:11px;color:#8b949e;text-transform:uppercase;letter-spacing:.5px}
+td{padding:8px 12px;border-bottom:1px solid #21262d;color:#c9d1d9}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#1c2128}
+.badge{background:#238636;color:#fff;padding:2px 8px;border-radius:20px;font-weight:700;font-size:11px}
+.sig{color:#6e7681;font-size:11px}
+.empty{color:#6e7681;font-style:italic;font-size:14px;padding:20px;text-align:center}
+.foot{font-size:11px;color:#6e7681;padding:16px 0;line-height:1.8;text-align:center}
+</style>
+</head>
+<body>
+<script>
+(function(){
+  var pw = "lili";
+  if (localStorage.getItem("swing_auth") === pw) return;
+  var entered = prompt("🔒 Enter password:");
+  if (!entered || entered.trim() !== pw) {
+    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0d1117;color:#f85149;font-family:sans-serif;font-size:18px;">❌ Wrong password. Refresh to try again.</div>';
+    return;
+  }
+  localStorage.setItem("swing_auth", pw);
+})();
+</script>
+<div class="wrap">
+
+  <div class="hdr">
+    <h1>📈 Swing &amp; Momentum Scanner</h1>
+    <div class="meta">Sunday April 12, 2026 · 05:52 PM &nbsp;·&nbsp; S&P 500 + NASDAQ 100 &nbsp;·&nbsp; llama3.2:3b</div>
+  </div>
+
+  <div class="mktbar">
+    <div class="mkt-tile">
+      <div class="mkt-label">SPY</div>
+      <div class="mkt-val">$679.46</div>
+      <div class="mkt-ret" style="color:#3fb950">+3.60% (5d)</div>
+    </div>
+    <div class="mkt-tile">
+      <div class="mkt-label">QQQ</div>
+      <div class="mkt-val">$611.07</div>
+      <div class="mkt-ret" style="color:#3fb950">+4.46% (5d)</div>
+    </div>
+    <div class="mkt-tile">
+      <div class="mkt-label">VIX</div>
+      <div class="mkt-val" style="color:#27ae60">19.2</div>
+      <div class="mkt-ret" style="color:#27ae60">Risk-On</div>
+    </div>
+    <div class="pulse-box">
+      <div class="lbl">💬 Market Pulse</div>
+      <div class="pulse-text">The current market momentum environment is characterized by a relatively calm VIX level and moderate SPY gains, suggesting that swing traders may be able to capitalize on small price movements without excessive volatility.</div>
+    </div>
+  </div>
+  
+
+  <div class="sector-panel">
+    <h3>Sector Rotation (5-day)</h3>
+    
+        <div class="sector-row">
+          <span class="sector-name">Tech</span>
+          <div class="sector-bar-wrap">
+            <div class="sector-bar" style="width:51.239999999999995%;background:#27ae60"></div>
+          </div>
+          <span class="sector-ret" style="color:#27ae60">+4.3%</span>
+        </div>
+        <div class="sector-row">
+          <span class="sector-name">Industrials</span>
+          <div class="sector-bar-wrap">
+            <div class="sector-bar" style="width:50.400000000000006%;background:#27ae60"></div>
+          </div>
+          <span class="sector-ret" style="color:#27ae60">+4.2%</span>
+        </div>
+        <div class="sector-row">
+          <span class="sector-name">Cons.Disc</span>
+          <div class="sector-bar-wrap">
+            <div class="sector-bar" style="width:42.36%;background:#27ae60"></div>
+          </div>
+          <span class="sector-ret" style="color:#27ae60">+3.5%</span>
+        </div>
+        <div class="sector-row">
+          <span class="sector-name">Real Estate</span>
+          <div class="sector-bar-wrap">
+            <div class="sector-bar" style="width:30.48%;background:#27ae60"></div>
+          </div>
+          <span class="sector-ret" style="color:#27ae60">+2.5%</span>
+        </div>
+        <div class="sector-row">
+          <span class="sector-name">Comms</span>
+          <div class="sector-bar-wrap">
+            <div class="sector-bar" style="width:23.52%;background:#27ae60"></div>
+          </div>
+          <span class="sector-ret" style="color:#27ae60">+2.0%</span>
+        </div>
+        <div class="sector-row">
+          <span class="sector-name">Financials</span>
+          <div class="sector-bar-wrap">
+            <div class="sector-bar" style="width:21.36%;background:#27ae60"></div>
+          </div>
+          <span class="sector-ret" style="color:#27ae60">+1.8%</span>
+        </div>
+        <div class="sector-row">
+          <span class="sector-name">Healthcare</span>
+          <div class="sector-bar-wrap">
+            <div class="sector-bar" style="width:8.399999999999999%;background:#27ae60"></div>
+          </div>
+          <span class="sector-ret" style="color:#27ae60">+0.7%</span>
+        </div>
+        <div class="sector-row">
+          <span class="sector-name">Cons.Stap</span>
+          <div class="sector-bar-wrap">
+            <div class="sector-bar" style="width:4.199999999999999%;background:#e74c3c"></div>
+          </div>
+          <span class="sector-ret" style="color:#e74c3c">-0.3%</span>
+        </div>
+        <div class="sector-row">
+          <span class="sector-name">Energy</span>
+          <div class="sector-bar-wrap">
+            <div class="sector-bar" style="width:55.08%;background:#e74c3c"></div>
+          </div>
+          <span class="sector-ret" style="color:#e74c3c">-4.6%</span>
+        </div>
+  </div>
+
+  <div class="sec-title">🤖 AI Analyst Picks — Full Breakdown</div>
+  <p class='empty'>No strong picks this hour — market may be choppy or closed.</p>
+
+  <div class="sec-title">🧠 LLM Retrospective — Last Run Analysis</div>
+  <div id="retrospective"><p class='empty'>No retrospective available — needs at least one previous run.</p></div>
+
+  <div class="sec-title">📊 Last Run Scorecard</div>
+  <div id="scorecard"><p class='empty'>No previous picks to score — this is the first run.</p></div>
+
+  <div class="sec-title">📊 Top 30 Quantitative Scores</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr>
+        <th>Ticker</th><th>Price</th><th>Score</th><th>RSI</th>
+        <th>MACD</th><th>EMA Trend</th><th>ADX</th><th>Volume</th><th>5d Ret</th><th>Signals</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>FRT</strong></td>
+          <td>$109.05</td>
+          <td><span class="badge">99</span></td>
+          <td>66.7</td>
+          <td>bullish</td>
+          <td>strong_up</td>
+          <td>20.4</td>
+          <td>2.17x</td>
+          <td style="color:#27ae60;font-weight:600">+2.1%</td>
+          <td style="color:#388bfd;font-size:11px">$106.89 – $109.6</td>
+          <td style="color:#3fb950;font-size:11px">$117.57</td>
+          <td style="color:#56d364;font-size:11px">$125.58</td>
+          <td style="color:#f85149;font-size:11px">$101.55</td>
+          <td style="color:#d2a8ff;font-size:11px">2.0:1</td>
+          <td class="sig">RSI 66.7 (bullish zone) · MACD above signal</td>
+        </tr>
+        <tr>
+          <td><strong>STZ</strong></td>
+          <td>$166.15</td>
+          <td><span class="badge">99</span></td>
+          <td>68.6</td>
+          <td>bullish</td>
+          <td>strong_up</td>
+          <td>12.8</td>
+          <td>1.65x</td>
+          <td style="color:#27ae60;font-weight:600">+9.9%</td>
+          <td style="color:#388bfd;font-size:11px">$157.01 – $166.98</td>
+          <td style="color:#3fb950;font-size:11px">$172.71</td>
+          <td style="color:#56d364;font-size:11px">$184.48</td>
+          <td style="color:#f85149;font-size:11px">$149.16</td>
+          <td style="color:#d2a8ff;font-size:11px">2.0:1</td>
+          <td class="sig">RSI 68.6 (bullish zone) · MACD above signal</td>
+        </tr>
+        <tr>
+          <td><strong>PH</strong></td>
+          <td>$984.23</td>
+          <td><span class="badge">94</span></td>
+          <td>62.7</td>
+          <td>bullish</td>
+          <td>strong_up</td>
+          <td>25.6</td>
+          <td>0.68x</td>
+          <td style="color:#27ae60;font-weight:600">+8.4%</td>
+          <td style="color:#388bfd;font-size:11px">$945.13 – $989.15</td>
+          <td style="color:#3fb950;font-size:11px">$1039.65</td>
+          <td style="color:#56d364;font-size:11px">$1110.54</td>
+          <td style="color:#f85149;font-size:11px">$897.87</td>
+          <td style="color:#d2a8ff;font-size:11px">2.0:1</td>
+          <td class="sig">RSI 62.7 (bullish zone) · MACD above signal</td>
+        </tr>
+        <tr>
+          <td><strong>NUE</strong></td>
+          <td>$186.12</td>
+          <td><span class="badge">94</span></td>
+          <td>69.5</td>
+          <td>bullish</td>
+          <td>strong_up</td>
+          <td>25.1</td>
+          <td>1.14x</td>
+          <td style="color:#27ae60;font-weight:600">+7.9%</td>
+          <td style="color:#388bfd;font-size:11px">$177.37 – $187.05</td>
+          <td style="color:#3fb950;font-size:11px">$195.11</td>
+          <td style="color:#56d364;font-size:11px">$208.42</td>
+          <td style="color:#f85149;font-size:11px">$168.5</td>
+          <td style="color:#d2a8ff;font-size:11px">2.0:1</td>
+          <td class="sig">RSI 69.5 (bullish zone) · MACD above signal</td>
+        </tr>
+        <tr>
+          <td><strong>AME</strong></td>
+          <td>$234.91</td>
+          <td><span class="badge">94</span></td>
+          <td>67.3</td>
+          <td>bullish</td>
+          <td>strong_up</td>
+          <td>28.1</td>
+          <td>0.79x</td>
+          <td style="color:#27ae60;font-weight:600">+7.6%</td>
+          <td style="color:#388bfd;font-size:11px">$225.24 – $236.08</td>
+          <td style="color:#3fb950;font-size:11px">$247.76</td>
+          <td style="color:#56d364;font-size:11px">$264.65</td>
+          <td style="color:#f85149;font-size:11px">$213.98</td>
+          <td style="color:#d2a8ff;font-size:11px">2.0:1</td>
+          <td class="sig">RSI 67.3 (bullish zone) · MACD above signal</td>
+        </tr>
+        <tr>
+          <td><strong>UNP</strong></td>
+          <td>$250.51</td>
+          <td><span class="badge">88</span></td>
+          <td>59.2</td>
+          <td>bullish</td>
+          <td>strong_up</td>
+          <td>28.0</td>
+          <td>0.86x</td>
+          <td style="color:#27ae60;font-weight:600">+2.4%</td>
+          <td style="color:#388bfd;font-size:11px">$247.09 – $251.76</td>
+          <td style="color:#3fb950;font-size:11px">$271.79</td>
+          <td style="color:#56d364;font-size:11px">$290.31</td>
+          <td style="color:#f85149;font-size:11px">$234.74</td>
+          <td style="color:#d2a8ff;font-size:11px">2.0:1</td>
+          <td class="sig">RSI 59.2 (bullish zone) · MACD above signal</td>
+        </tr>
+        <tr>
+          <td><strong>GRMN</strong></td>
+          <td>$256.89</td>
+          <td><span class="badge">87</span></td>
+          <td>66.8</td>
+          <td>bullish</td>
+          <td>strong_up</td>
+          <td>16.7</td>
+          <td>0.97x</td>
+          <td style="color:#27ae60;font-weight:600">+8.1%</td>
+          <td style="color:#388bfd;font-size:11px">$247.32 – $258.17</td>
+          <td style="color:#3fb950;font-size:11px">$272.06</td>
+          <td style="color:#56d364;font-size:11px">$290.62</td>
+          <td style="color:#f85149;font-size:11px">$234.95</td>
+          <td style="color:#d2a8ff;font-size:11px">2.0:1</td>
+          <td class="sig">RSI 66.8 (bullish zone) · MACD above signal</td>
+        </tr>
+        <tr>
+          <td><strong>ADI</strong></td>
+          <td>$350.14</td>
+          <td><span class="badge">87</span></td>
+          <td>67.0</td>
+          <td>bullish</td>
+          <td>strong_up</td>
+          <td>24.5</td>
+          <td>0.74x</td>
+          <td style="color:#27ae60;font-weight:600">+10.0%</td>
+          <td style="color:#388bfd;font-size:11px">$335.73 – $351.89</td>
+          <td style="color:#3fb950;font-size:11px">$369.31</td>
+          <td style="color:#56d364;font-size:11px">$394.5</td>
+          <td style="color:#f85149;font-size:11px">$318.94</td>
+          <td style="color:#d2a8ff;font-size:11px">2.0:1</td>
+          <td class="sig">RSI 67.0 (bullish zone) · MACD above signal</td>
+        </tr>
+        <tr>
+          <td><strong>FCX</strong></td>
+          <td>$67.8</td>
+          <td><span class="badge">87</span></td>
+          <td>66.8</td>
+          <td>bullish</td>
+          <td>strong_up</td>
+          <td>20.4</td>
+          <td>0.89x</td>
+          <td style="color:#27ae60;font-weight:600">+10.5%</td>
+          <td style="color:#388bfd;font-size:11px">$63.25 – $68.14</td>
+          <td style="color:#3fb950;font-size:11px">$69.57</td>
+          <td style="color:#56d364;font-size:11px">$74.31</td>
+          <td style="color:#f85149;font-size:11px">$60.09</td>
+          <td style="color:#d2a8ff;font-size:11px">2.0:1</td>
+          <td class="sig">RSI 66.8 (bullish zone) · MACD above signal</td>
+        </tr>
+        <tr>
+          <td><strong>JCI</strong></td>
+          <td>$142.53</td>
+          <td><span class="badge">87</span></td>
+          <td>62.4</td>
+          <td>bullish</td>
+          <td>strong_up</td>
+          <td>25.0</td>
+          <td>1.0x</td>
+          <td style="color:#27ae60;font-weight:600">+7.2%</td>
+          <td style="color:#388bfd;font-size:11px">$137.36 – $143.24</td>
+          <td style="color:#3fb950;font-size:11px">$151.1</td>
+          <td style="color:#56d364;font-size:11px">$161.41</td>
+          <td style="color:#f85149;font-size:11px">$130.49</td>
+          <td style="color:#d2a8ff;font-size:11px">2.0:1</td>
+          <td class="sig">RSI 62.4 (bullish zone) · MACD above signal</td>
+        </tr>
+        <tr>
+          <td><strong>JBHT</strong></td>
+          <td>$227.04</td>
+          <td><span class="badge">87</span></td>
+          <td>66.7</td>
+          <td>bullish</td>
+          <td>strong_up</td>
+          <td>20.0</td>
+          <td>0.92x</td>
+          <td style="color:#27ae60;font-weight:600">+5.6%</td>
+          <td style="color:#388bfd;font-size:11px">$219.69 – $228.18</td>
+          <td style="color:#3fb950;font-size:11px">$241.65</td>
+          <td style="color:#56d364;font-size:11px">$258.12</td>
+          <td style="color:#f85149;font-size:11px">$208.71</td>
+          <td style="color:#d2a8ff;font-size:11px">2.0:1</td>
+          <td class="sig">RSI 66.7 (bullish zone) · MACD above signal</td>
+        </tr>
+        <tr>
+          <td><strong>HST</strong></td>
+          <td>$20.14</td>
+          <td><span class="badge">87</span></td>
+          <td>64.0</td>
+          <td>bullish</td>
+          <td>strong_up</td>
+          <td>14.2</td>
+          <td>0.93x</td>
+          <td style="color:#27ae60;font-weight:600">+5.2%</td>
+          <td style="color:#388bfd;font-size:11px">$19.54 – $20.24</td>
+          <td style="color:#3fb950;font-size:11px">$21.5</td>
+          <td style="color:#56d364;font-size:11px">$22.97</td>
+          <td style="color:#f85149;font-size:11px">$18.56</td>
+          <td style="color:#d2a8ff;font-size:11px">2.0:1</td>
+          <td class="sig">RSI 64.0 (bullish zone) · MACD above signal</td>
+        </tr>
+        <tr>
+          <td><strong>IRM</strong></td>
+          <td>$109.37</td>
+          <td><span class="badge">87</span></td>
+          <td>63.7</td>
+          <td>bullish</td>
+          <td>strong_up</td>
+          <td>21.5</td>
+          <td>0.75x</td>
+          <td style="color:#27ae60;font-weight:600">+5.9%</td>
+          <td style="color:#388bfd;font-size:11px">$105.78 – $109.92</td>
+          <td style="color:#3fb950;font-size:11px">$116.36</td>
+          <td style="color:#56d364;font-size:11px">$124.3</td>
+          <td style="color:#f85149;font-size:11px">$100.49</td>
+          <td style="color:#d2a8ff;font-size:11px">2.0:1</td>
+          <td class="sig">RSI 63.7 (bullish zone) · MACD above signal</td>
+        </tr>
+        <tr>
+          <td><strong>CMI</strong></td>
+          <td>$616.14</td>
+          <td><span class="badge">87</span></td>
+          <td>69.1</td>
+          <td>bullish</td>
+          <td>strong_up</td>
+          <td>22.4</td>
+          <td>0.79x</td>
+          <td style="color:#27ae60;font-weight:600">+12.1%</td>
+          <td style="color:#388bfd;font-size:11px">$579.67 – $619.22</td>
+          <td style="color:#3fb950;font-size:11px">$637.63</td>
+          <td style="color:#56d364;font-size:11px">$681.1</td>
+          <td style="color:#f85149;font-size:11px">$550.69</td>
+          <td style="color:#d2a8ff;font-size:11px">2.0:1</td>
+          <td class="sig">RSI 69.1 (bullish zone) · MACD above signal</td>
+        </tr>
+        <tr>
+          <td><strong>GEV</strong></td>
+          <td>$991.32</td>
+          <td><span class="badge">87</span></td>
+          <td>69.4</td>
+          <td>bullish</td>
+          <td>strong_up</td>
+          <td>14.2</td>
+          <td>0.85x</td>
+          <td style="color:#27ae60;font-weight:600">+10.3%</td>
+          <td style="color:#388bfd;font-size:11px">$931.12 – $996.28</td>
+          <td style="color:#3fb950;font-size:11px">$1024.24</td>
+          <td style="color:#56d364;font-size:11px">$1094.08</td>
+          <td style="color:#f85149;font-size:11px">$884.56</td>
+          <td style="color:#d2a8ff;font-size:11px">2.0:1</td>
+          <td class="sig">RSI 69.4 (bullish zone) · MACD above signal</td>
+        </tr>
+        <tr>
+          <td><strong>KEYS</strong></td>
+          <td>$324.18</td>
+          <td><span class="badge">87</span></td>
+          <td>69.6</td>
+          <td>bullish</td>
+          <td>strong_up</td>
+          <td>20.7</td>
+          <td>0.88x</td>
+          <td style="color:#27ae60;font-weight:600">+11.3%</td>
+          <td style="color:#388bfd;font-size:11px">$307.15 – $325.8</td>
+          <td style="color:#3fb950;font-size:11px">$337.87</td>
+          <td style="color:#56d364;font-size:11px">$360.91</td>
+          <td style="color:#f85149;font-size:11px">$291.79</td>
+          <td style="color:#d2a8ff;font-size:11px">2.0:1</td>
+          <td class="sig">RSI 69.6 (bullish zone) · MACD above signal</td>
+        </tr>
+        <tr>
+          <td><strong>TER</strong></td>
+          <td>$367.99</td>
+          <td><span class="badge">87</span></td>
+          <td>68.9</td>
+          <td>bullish</td>
+          <td>strong_up</td>
+          <td>19.6</td>
+          <td>1.0x</td>
+          <td style="color:#27ae60;font-weight:600">+18.9%</td>
+          <td style="color:#388bfd;font-size:11px">$338.15 – $369.83</td>
+          <td style="color:#3fb950;font-size:11px">$371.97</td>
+          <td style="color:#56d364;font-size:11px">$397.33</td>
+          <td style="color:#f85149;font-size:11px">$321.24</td>
+          <td style="color:#d2a8ff;font-size:11px">2.0:1</td>
+          <td class="sig">RSI 68.9 (bullish zone) · MACD above signal</td>
+        </tr>
+        <tr>
+          <td><strong>FAST</strong></td>
+          <td>$49.17</td>
+          <td><span class="badge">87</span></td>
+          <td>68.6</td>
+          <td>bullish</td>
+          <td>strong_up</td>
+          <td>15.9</td>
+          <td>0.93x</td>
+          <td style="color:#27ae60;font-weight:600">+6.2%</td>
+          <td style="color:#388bfd;font-size:11px">$47.42 – $49.42</td>
+          <td style="color:#3fb950;font-size:11px">$52.16</td>
+          <td style="color:#56d364;font-size:11px">$55.72</td>
+          <td style="color:#f85149;font-size:11px">$45.05</td>
+          <td style="color:#d2a8ff;font-size:11px">2.0:1</td>
+          <td class="sig">RSI 68.6 (bullish zone) · MACD above signal</td>
+        </tr>
+        <tr>
+          <td><strong>TXN</strong></td>
+          <td>$214.73</td>
+          <td><span class="badge">87</span></td>
+          <td>66.5</td>
+          <td>bullish</td>
+          <td>strong_up</td>
+          <td>23.8</td>
+          <td>0.73x</td>
+          <td style="color:#27ae60;font-weight:600">+10.2%</td>
+          <td style="color:#388bfd;font-size:11px">$205.07 – $215.8</td>
+          <td style="color:#3fb950;font-size:11px">$225.57</td>
+          <td style="color:#56d364;font-size:11px">$240.94</td>
+          <td style="color:#f85149;font-size:11px">$194.82</td>
+          <td style="color:#d2a8ff;font-size:11px">2.0:1</td>
+          <td class="sig">RSI 66.5 (bullish zone) · MACD above signal</td>
+        </tr>
+        <tr>
+          <td><strong>WDC</strong></td>
+          <td>$343.43</td>
+          <td><span class="badge">87</span></td>
+          <td>66.0</td>
+          <td>bullish</td>
+          <td>strong_up</td>
+          <td>19.3</td>
+          <td>0.68x</td>
+          <td style="color:#27ae60;font-weight:600">+16.4%</td>
+          <td style="color:#388bfd;font-size:11px">$318.65 – $345.15</td>
+          <td style="color:#3fb950;font-size:11px">$350.51</td>
+          <td style="color:#56d364;font-size:11px">$374.4</td>
+          <td style="color:#f85149;font-size:11px">$302.72</td>
+          <td style="color:#d2a8ff;font-size:11px">2.0:1</td>
+          <td class="sig">RSI 66.0 (bullish zone) · MACD above signal</td>
+        </tr>
+        <tr>
+          <td><strong>AMAT</strong></td>
+          <td>$399.49</td>
+          <td><span class="badge">87</span></td>
+          <td>66.2</td>
+          <td>bullish</td>
+          <td>strong_up</td>
+          <td>16.8</td>
+          <td>1.0x</td>
+          <td style="color:#27ae60;font-weight:600">+14.6%</td>
+          <td style="color:#388bfd;font-size:11px">$373.87 – $401.49</td>
+          <td style="color:#3fb950;font-size:11px">$411.25</td>
+          <td style="color:#56d364;font-size:11px">$439.28</td>
+          <td style="color:#f85149;font-size:11px">$355.18</td>
+          <td style="color:#d2a8ff;font-size:11px">2.0:1</td>
+          <td class="sig">RSI 66.2 (bullish zone) · MACD above signal</td>
+        </tr>
+        <tr>
+          <td><strong>CAT</strong></td>
+          <td>$790.66</td>
+          <td><span class="badge">87</span></td>
+          <td>67.2</td>
+          <td>bullish</td>
+          <td>strong_up</td>
+          <td>16.9</td>
+          <td>0.8x</td>
+          <td style="color:#27ae60;font-weight:600">+10.2%</td>
+          <td style="color:#388bfd;font-size:11px">$751.32 – $794.61</td>
+          <td style="color:#3fb950;font-size:11px">$826.46</td>
+          <td style="color:#56d364;font-size:11px">$882.82</td>
+          <td style="color:#f85149;font-size:11px">$713.75</td>
+          <td style="color:#d2a8ff;font-size:11px">2.0:1</td>
+          <td class="sig">RSI 67.2 (bullish zone) · MACD above signal</td>
+        </tr>
+        <tr>
+          <td><strong>RL</strong></td>
+          <td>$379.87</td>
+          <td><span class="badge">87</span></td>
+          <td>62.2</td>
+          <td>bullish</td>
+          <td>strong_up</td>
+          <td>19.3</td>
+          <td>0.68x</td>
+          <td style="color:#27ae60;font-weight:600">+9.2%</td>
+          <td style="color:#388bfd;font-size:11px">$364.46 – $381.77</td>
+          <td style="color:#3fb950;font-size:11px">$400.9</td>
+          <td style="color:#56d364;font-size:11px">$428.23</td>
+          <td style="color:#f85149;font-size:11px">$346.24</td>
+          <td style="color:#d2a8ff;font-size:11px">2.0:1</td>
+          <td class="sig">RSI 62.2 (bullish zone) · MACD above signal</td>
+        </tr>
+        <tr>
+          <td><strong>PCAR</strong></td>
+          <td>$127.19</td>
+          <td><span class="badge">87</span></td>
+          <td>68.6</td>
+          <td>bullish</td>
+          <td>strong_up</td>
+          <td>23.6</td>
+          <td>0.98x</td>
+          <td style="color:#27ae60;font-weight:600">+7.5%</td>
+          <td style="color:#388bfd;font-size:11px">$121.89 – $127.83</td>
+          <td style="color:#3fb950;font-size:11px">$134.07</td>
+          <td style="color:#56d364;font-size:11px">$143.21</td>
+          <td style="color:#f85149;font-size:11px">$115.8</td>
+          <td style="color:#d2a8ff;font-size:11px">2.0:1</td>
+          <td class="sig">RSI 68.6 (bullish zone) · MACD above signal</td>
+        </tr>
+        <tr>
+          <td><strong>DOV</strong></td>
+          <td>$217.12</td>
+          <td><span class="badge">87</span></td>
+          <td>56.4</td>
+          <td>bullish</td>
+          <td>strong_up</td>
+          <td>21.5</td>
+          <td>0.71x</td>
+          <td style="color:#27ae60;font-weight:600">+5.7%</td>
+          <td style="color:#388bfd;font-size:11px">$212.84 – $218.21</td>
+          <td style="color:#3fb950;font-size:11px">$234.12</td>
+          <td style="color:#56d364;font-size:11px">$250.08</td>
+          <td style="color:#f85149;font-size:11px">$202.2</td>
+          <td style="color:#d2a8ff;font-size:11px">2.0:1</td>
+          <td class="sig">RSI 56.4 (bullish zone) · MACD above signal</td>
+        </tr>
+        <tr>
+          <td><strong>JBL</strong></td>
+          <td>$299.5</td>
+          <td><span class="badge">87</span></td>
+          <td>65.9</td>
+          <td>bullish</td>
+          <td>strong_up</td>
+          <td>15.1</td>
+          <td>0.91x</td>
+          <td style="color:#27ae60;font-weight:600">+11.5%</td>
+          <td style="color:#388bfd;font-size:11px">$281.64 – $301.0</td>
+          <td style="color:#3fb950;font-size:11px">$309.8</td>
+          <td style="color:#56d364;font-size:11px">$330.92</td>
+          <td style="color:#f85149;font-size:11px">$267.56</td>
+          <td style="color:#d2a8ff;font-size:11px">2.0:1</td>
+          <td class="sig">RSI 65.9 (bullish zone) · MACD above signal</td>
+        </tr>
+        <tr>
+          <td><strong>COHR</strong></td>
+          <td>$307.5</td>
+          <td><span class="badge">87</span></td>
+          <td>65.9</td>
+          <td>bullish</td>
+          <td>strong_up</td>
+          <td>13.5</td>
+          <td>0.88x</td>
+          <td style="color:#27ae60;font-weight:600">+19.1%</td>
+          <td style="color:#388bfd;font-size:11px">$273.3 – $309.04</td>
+          <td style="color:#3fb950;font-size:11px">$300.64</td>
+          <td style="color:#56d364;font-size:11px">$321.15</td>
+          <td style="color:#f85149;font-size:11px">$259.63</td>
+          <td style="color:#d2a8ff;font-size:11px">2.0:1</td>
+          <td class="sig">RSI 65.9 (bullish zone) · MACD above signal</td>
+        </tr>
+        <tr>
+          <td><strong>HUBB</strong></td>
+          <td>$536.01</td>
+          <td><span class="badge">87</span></td>
+          <td>65.8</td>
+          <td>bullish</td>
+          <td>strong_up</td>
+          <td>18.2</td>
+          <td>0.79x</td>
+          <td style="color:#27ae60;font-weight:600">+8.4%</td>
+          <td style="color:#388bfd;font-size:11px">$514.61 – $538.69</td>
+          <td style="color:#3fb950;font-size:11px">$566.07</td>
+          <td style="color:#56d364;font-size:11px">$604.67</td>
+          <td style="color:#f85149;font-size:11px">$488.88</td>
+          <td style="color:#d2a8ff;font-size:11px">2.0:1</td>
+          <td class="sig">RSI 65.8 (bullish zone) · MACD above signal</td>
+        </tr>
+        <tr>
+          <td><strong>NTRS</strong></td>
+          <td>$152.23</td>
+          <td><span class="badge">87</span></td>
+          <td>69.2</td>
+          <td>bullish</td>
+          <td>strong_up</td>
+          <td>19.4</td>
+          <td>0.81x</td>
+          <td style="color:#27ae60;font-weight:600">+7.0%</td>
+          <td style="color:#388bfd;font-size:11px">$147.15 – $152.99</td>
+          <td style="color:#3fb950;font-size:11px">$161.87</td>
+          <td style="color:#56d364;font-size:11px">$172.91</td>
+          <td style="color:#f85149;font-size:11px">$139.79</td>
+          <td style="color:#d2a8ff;font-size:11px">2.0:1</td>
+          <td class="sig">RSI 69.2 (bullish zone) · MACD above signal</td>
+        </tr>
+        <tr>
+          <td><strong>LRCX</strong></td>
+          <td>$263.66</td>
+          <td><span class="badge">87</span></td>
+          <td>66.9</td>
+          <td>bullish</td>
+          <td>strong_up</td>
+          <td>19.4</td>
+          <td>0.88x</td>
+          <td style="color:#27ae60;font-weight:600">+20.7%</td>
+          <td style="color:#388bfd;font-size:11px">$239.91 – $264.98</td>
+          <td style="color:#3fb950;font-size:11px">$263.91</td>
+          <td style="color:#56d364;font-size:11px">$281.91</td>
+          <td style="color:#f85149;font-size:11px">$227.91</td>
+          <td style="color:#d2a8ff;font-size:11px">2.0:1</td>
+          <td class="sig">RSI 66.9 (bullish zone) · MACD above signal</td>
+        </tr></tbody>
+    </table>
+  </div>
+
+  <div class="foot">
+    ⚠️ Not financial advice. Research/screening tool only — do your own due diligence before trading.<br>
+    Scanned 327 stocks · 2026-04-12 17:52:46 · Reports: /Users/vader/Projects/HighStakesCasino/reports
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Swing Picks · Apr 12 12:35</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#0d1117;color:#e6edf3;padding:20px}
+.wrap{max-width:980px;margin:0 auto}
+
+/* Header */
+.hdr{background:linear-gradient(135deg,#161b22,#21262d);padding:24px 28px;border-radius:12px;border:1px solid #30363d;margin-bottom:16px}
+.hdr h1{font-size:22px;font-weight:800;color:#f0f6fc}
+.hdr .meta{color:#8b949e;font-size:12px;margin-top:4px}
+
+/* Market bar */
+.mktbar{display:grid;grid-template-columns:1fr 1fr 1fr 2fr;gap:12px;margin-bottom:16px}
+.mkt-tile{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:14px 16px}
+.mkt-label{font-size:11px;color:#8b949e;text-transform:uppercase;letter-spacing:.8px}
+.mkt-val{font-size:20px;font-weight:800;color:#f0f6fc;margin:4px 0 2px}
+.mkt-ret{font-size:12px;font-weight:600}
+.pulse-box{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:14px 16px}
+.pulse-box .lbl{font-size:11px;color:#8b949e;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.pulse-text{font-size:13px;color:#c9d1d9;line-height:1.6}
+
+/* Sector bars */
+.sector-panel{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;margin-bottom:16px}
+.sector-panel h3{font-size:12px;color:#8b949e;text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px}
+.sector-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.sector-name{font-size:12px;color:#c9d1d9;width:80px;flex-shrink:0}
+.sector-bar-wrap{flex:1;background:#21262d;border-radius:4px;height:6px}
+.sector-bar{height:6px;border-radius:4px;transition:width .3s}
+.sector-ret{font-size:12px;font-weight:700;width:50px;text-align:right}
+
+/* Section title */
+.sec-title{font-size:12px;color:#8b949e;text-transform:uppercase;letter-spacing:1px;margin:20px 0 12px;font-weight:700}
+
+/* Analysis card */
+.acard{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:20px;margin-bottom:16px}
+.acard-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.acard-left{display:flex;align-items:center;gap:10px}
+.acard-ticker{font-size:28px;font-weight:900;color:#f0f6fc}
+.setup-badge{font-size:11px;padding:3px 10px;border-radius:20px;color:#fff;font-weight:600}
+.acard-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rec-badge{font-size:12px;padding:5px 14px;border-radius:20px;color:#fff;font-weight:700}
+.conf-badge{font-size:12px;color:#8b949e;background:#21262d;padding:4px 10px;border-radius:20px}
+.acard-price-row{display:flex;align-items:center;gap:14px;margin-bottom:12px;flex-wrap:wrap}
+.price-now{font-size:20px;font-weight:700;color:#79c0ff}
+.quant-score{font-size:12px;color:#8b949e;background:#21262d;padding:3px 10px;border-radius:20px}
+.ret-badge{font-size:13px;font-weight:700}
+.thesis-box{background:#21262d;border-left:3px solid #388bfd;padding:12px 14px;border-radius:6px;font-size:13px;color:#c9d1d9;line-height:1.6;margin-bottom:14px}
+.analysis-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.ag-block{background:#0d1117;border:1px solid #21262d;border-radius:6px;padding:10px 12px}
+.ag-title{font-size:11px;color:#8b949e;font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.ag-text{font-size:12px;color:#c9d1d9;line-height:1.6}
+.trade-levels{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.tl{background:#21262d;border-radius:8px;padding:8px 12px;text-align:center;font-size:11px;color:#8b949e;min-width:90px;flex:1}
+.tl strong{display:block;font-size:13px;color:#f0f6fc;margin-top:3px}
+.tl.entry{border-top:2px solid #388bfd}
+.tl.t1{border-top:2px solid #3fb950}
+.tl.t2{border-top:2px solid #56d364}
+.tl.stop{border-top:2px solid #f85149}
+.tl.rr{border-top:2px solid #d2a8ff}
+.tl.tf{border-top:2px solid #ffa657}
+.indicator-strip{display:flex;gap:8px;flex-wrap:wrap}
+.indicator-strip span{font-size:11px;background:#0d1117;border:1px solid #30363d;padding:3px 10px;border-radius:20px;color:#8b949e}
+.indicator-strip b{color:#c9d1d9}
+
+/* Quant table */
+.tbl-wrap{background:#161b22;border:1px solid #30363d;border-radius:8px;overflow:hidden;margin-bottom:20px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead tr{background:#21262d}
+th{padding:10px 12px;text-align:left;font-weight:600;font-size:11px;color:#8b949e;text-transform:uppercase;letter-spacing:.5px}
+td{padding:8px 12px;border-bottom:1px solid #21262d;color:#c9d1d9}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#1c2128}
+.badge{background:#238636;color:#fff;padding:2px 8px;border-radius:20px;font-weight:700;font-size:11px}
+.sig{color:#6e7681;font-size:11px}
+.empty{color:#6e7681;font-style:italic;font-size:14px;padding:20px;text-align:center}
+.foot{font-size:11px;color:#6e7681;padding:16px 0;line-height:1.8;text-align:center}
+</style>
+</head>
+<body>
+<script>
+(function(){
+  var pw = "lili";
+  var stored = sessionStorage.getItem("swing_auth");
+  if (stored === pw) return;
+  var entered = prompt("🔒 Enter password to view report:");
+  if (entered !== pw) {
+    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0d1117;color:#f85149;font-family:sans-serif;font-size:18px;">❌ Incorrect password. Refresh to try again.</div>';
+    return;
+  }
+  sessionStorage.setItem("swing_auth", pw);
+})();
+</script>
+<div class="wrap">
+
+  <div class="hdr">
+    <h1>📈 Swing &amp; Momentum Scanner</h1>
+    <div class="meta">Sunday April 12, 2026 · 12:35 PM &nbsp;·&nbsp; S&P 500 + NASDAQ 100 &nbsp;·&nbsp; llama3.1:8b</div>
+  </div>
+
+  <div class="mktbar">
+    <div class="mkt-tile">
+      <div class="mkt-label">SPY</div>
+      <div class="mkt-val">$679.46</div>
+      <div class="mkt-ret" style="color:#3fb950">+3.60% (5d)</div>
+    </div>
+    <div class="mkt-tile">
+      <div class="mkt-label">QQQ</div>
+      <div class="mkt-val">$611.07</div>
+      <div class="mkt-ret" style="color:#3fb950">+4.46% (5d)</div>
+    </div>
+    <div class="mkt-tile">
+      <div class="mkt-label">VIX</div>
+      <div class="mkt-val" style="color:#27ae60">19.2</div>
+      <div class="mkt-ret" style="color:#27ae60">Risk-On</div>
+    </div>
+    <div class="pulse-box">
+      <div class="lbl">💬 Market Pulse</div>
+      <div class="pulse-text">Market context unavailable.</div>
+    </div>
+  </div>
+
+  <div class="sector-panel">
+    <h3>Sector Rotation (5-day)</h3>
+    
+        <div class="sector-row">
+          <span class="sector-name">Tech</span>
+          <div class="sector-bar-wrap">
+            <div class="sector-bar" style="width:51.239999999999995%;background:#27ae60"></div>
+          </div>
+          <span class="sector-ret" style="color:#27ae60">+4.3%</span>
+        </div>
+        <div class="sector-row">
+          <span class="sector-name">Industrials</span>
+          <div class="sector-bar-wrap">
+            <div class="sector-bar" style="width:50.400000000000006%;background:#27ae60"></div>
+          </div>
+          <span class="sector-ret" style="color:#27ae60">+4.2%</span>
+        </div>
+        <div class="sector-row">
+          <span class="sector-name">Cons.Disc</span>
+          <div class="sector-bar-wrap">
+            <div class="sector-bar" style="width:42.36%;background:#27ae60"></div>
+          </div>
+          <span class="sector-ret" style="color:#27ae60">+3.5%</span>
+        </div>
+        <div class="sector-row">
+          <span class="sector-name">Real Estate</span>
+          <div class="sector-bar-wrap">
+            <div class="sector-bar" style="width:30.48%;background:#27ae60"></div>
+          </div>
+          <span class="sector-ret" style="color:#27ae60">+2.5%</span>
+        </div>
+        <div class="sector-row">
+          <span class="sector-name">Comms</span>
+          <div class="sector-bar-wrap">
+            <div class="sector-bar" style="width:23.52%;background:#27ae60"></div>
+          </div>
+          <span class="sector-ret" style="color:#27ae60">+2.0%</span>
+        </div>
+        <div class="sector-row">
+          <span class="sector-name">Financials</span>
+          <div class="sector-bar-wrap">
+            <div class="sector-bar" style="width:21.36%;background:#27ae60"></div>
+          </div>
+          <span class="sector-ret" style="color:#27ae60">+1.8%</span>
+        </div>
+        <div class="sector-row">
+          <span class="sector-name">Healthcare</span>
+          <div class="sector-bar-wrap">
+            <div class="sector-bar" style="width:8.399999999999999%;background:#27ae60"></div>
+          </div>
+          <span class="sector-ret" style="color:#27ae60">+0.7%</span>
+        </div>
+        <div class="sector-row">
+          <span class="sector-name">Cons.Stap</span>
+          <div class="sector-bar-wrap">
+            <div class="sector-bar" style="width:4.199999999999999%;background:#e74c3c"></div>
+          </div>
+          <span class="sector-ret" style="color:#e74c3c">-0.3%</span>
+        </div>
+        <div class="sector-row">
+          <span class="sector-name">Energy</span>
+          <div class="sector-bar-wrap">
+            <div class="sector-bar" style="width:55.08%;background:#e74c3c"></div>
+          </div>
+          <span class="sector-ret" style="color:#e74c3c">-4.6%</span>
+        </div>
+  </div>
+
+  <div class="sec-title">🤖 AI Analyst Picks — Full Breakdown</div>
+  <p class='empty'>No strong picks this hour — market may be choppy or closed.</p>
+
+  <div class="sec-title">📊 Top 30 Quantitative Scores</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr>
+        <th>Ticker</th><th>Price</th><th>Score</th><th>RSI</th>
+        <th>MACD</th><th>EMA Trend</th><th>ADX</th><th>Volume</th><th>5d Ret</th><th>Signals</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="foot">
+    ⚠️ Not financial advice. Research/screening tool only — do your own due diligence before trading.<br>
+    Scanned 0 stocks · 2026-04-12 12:35:09 · Reports: /Users/vader/Projects/Casino/reports
+  </div>
+</div>
+</body>
+</html>
